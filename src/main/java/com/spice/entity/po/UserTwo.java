@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author spice
@@ -12,13 +13,13 @@ import lombok.Data;
  */
 @Data
 @TableName("user_two")
+@Accessors(chain = true)
 public class UserTwo {
 
     /**
      * 主键
-     * 设置主键的生成方式是；手动输入（方便测试）
      */
-    @TableId(value = "id", type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**

@@ -1,7 +1,13 @@
 package com.spice.service.impl;
 
+import com.spice.dao.UserTwoMapper;
+import com.spice.entity.po.UserTwo;
 import com.spice.service.UserTwoService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * @author spice
@@ -9,4 +15,25 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserTwoServiceImpl implements UserTwoService {
+
+    @Resource
+    private UserTwoMapper userTwoMapper;
+
+    @Override
+    public void truncate() {
+        userTwoMapper.truncate();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void addWithRequired(UserTwo userTwo) {
+        userTwoMapper.insert(userTwo);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void addWithRequiredAndException(UserTwo userTwo) {
+        userTwoMapper.insert(userTwo);
+        throw new RuntimeException();
+    }
 }

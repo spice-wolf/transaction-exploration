@@ -10,4 +10,9 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserTwoMapper extends BaseMapper<UserTwo> {
+
+    /**
+     * 截断表
+     */
+    void truncate();
 }

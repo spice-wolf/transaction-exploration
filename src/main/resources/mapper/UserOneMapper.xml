@@ -5,4 +5,8 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
+
+    <update id="truncate">
+        truncate table user_one
+    </update>
 </mapper>
