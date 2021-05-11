@@ -24,27 +24,22 @@ public class PropagationServiceImpl implements PropagationService {
     private UserTwoService userTwoService;
 
     private final UserOne userGosling = new UserOne().setName("Gosling");
-    private final UserTwo userLinus = new UserTwo().setName("Linus");
     private final UserTwo userDennis = new UserTwo().setName("Dennis");
 
     /**
      * Gosling : 被正常插入
-     * Linus   : 被正常插入
      * Dennis  : 不会被插入，因为 addWithRequiredAndException 方法中抛出了一个异常，导致了事务回滚
      */
     @Override
     public void required() {
         userOneService.addWithRequired(userGosling);
 
-        userTwoService.addWithRequired(userLinus);
-
         userTwoService.addWithRequiredAndException(userDennis);
     }
 
     /**
-     * Gosling : 不会被插入，因为 addWithRequired 方法的事务加入到了 requiredTestWithTransaction 方法的事务中，
-     *           而 addWithRequiredAndException 方法抛出了一个异常，导致 requiredTestWithTransaction 方法也抛出异常而进行了回滚
-     * Linus   : 不会被插入，原因和 Gosling 的一样
+     * Gosling : 不会被插入，因为 addWithRequired 方法的事务加入到了 requiredWithTransaction 方法的事务中，
+     *           而 addWithRequiredAndException 方法抛出了一个异常，导致 requiredWithTransaction 方法也抛出异常而进行了回滚
      * Dennis  : 不会被插入，原因和 Gosling 的一样
      */
     @Override
@@ -52,17 +47,14 @@ public class PropagationServiceImpl implements PropagationService {
     public void requiredWithTransaction() {
         userOneService.addWithRequired(userGosling);
 
-        userTwoService.addWithRequired(userLinus);
-
         userTwoService.addWithRequiredAndException(userDennis);
     }
 
     /**
      * 请注意!!!
-     * Gosling : 不会被插入，因为 addWithRequired 方法的事务加入到了 requiredTestWithTransactionAndExceptionCatch 方法的事务中，
-     *           addWithRequiredAndException 方法抛出的异常被捕获了，但即使 requiredTestWithTransactionAndExceptionCatch 方法
+     * Gosling : 不会被插入，因为 addWithRequired 方法的事务加入到了 requiredWithTransactionAndExceptionCatch 方法的事务中，
+     *           addWithRequiredAndException 方法抛出的异常被捕获了，但即使 requiredWithTransactionAndExceptionCatch 方法
      *           没有感知到异常，整个事务仍然会回滚
-     * Linus   : 不会被插入，原因和 Gosling 的一样
      * Dennis  : 不会被插入，原因和 Gosling 的一样
      *
      * 由 requiredWithTransaction 方法和 requiredWithTransactionAndExceptionCatch 方法的测试结果可见，
@@ -73,8 +65,6 @@ public class PropagationServiceImpl implements PropagationService {
     @Transactional(rollbackFor = Exception.class)
     public void requiredWithTransactionAndExceptionCatch() {
         userOneService.addWithRequired(userGosling);
-
-        userTwoService.addWithRequired(userLinus);
 
         try {
             userTwoService.addWithRequiredAndException(userDennis);

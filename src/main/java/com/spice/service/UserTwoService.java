@@ -14,14 +14,6 @@ public interface UserTwoService {
     void truncate();
 
     /**
-     * 新增UserTwo
-     * propagation = required
-     *
-     * @param userTwo UserTwo
-     */
-    void addWithRequired(UserTwo userTwo);
-
-    /**
      * 新增UserTwo，并在方法内部抛出异常
      * propagation = required
      *

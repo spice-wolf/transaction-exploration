@@ -26,12 +26,6 @@ public class UserTwoServiceImpl implements UserTwoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void addWithRequired(UserTwo userTwo) {
-        userTwoMapper.insert(userTwo);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void addWithRequiredAndException(UserTwo userTwo) {
         userTwoMapper.insert(userTwo);
         throw new RuntimeException();

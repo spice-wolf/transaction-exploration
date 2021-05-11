@@ -16,7 +16,7 @@ import javax.annotation.Resource;
  * @date 2021/05/11 15:55
  */
 @SpringBootTest
-public class TransactionPropagationTest {
+public class PropagationServiceTest {
 
     @Resource
     private UserOneService userOneService;
