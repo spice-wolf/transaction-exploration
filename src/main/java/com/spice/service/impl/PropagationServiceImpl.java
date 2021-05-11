@@ -72,4 +72,71 @@ public class PropagationServiceImpl implements PropagationService {
             System.out.println("外部方法捕获了一个异常");
         }
     }
+
+    /**
+     * Gosling : 被正常插入
+     * Dennis  : 不会被插入，因为 addWithRequiresNewAndException 方法开启了自己的单独事务，并且内部抛出了异常，导致了事务回滚
+     */
+    @Override
+    public void requiresNew() {
+        userOneService.addWithRequiresNew(userGosling);
+
+        userTwoService.addWithRequiresNewAndException(userDennis);
+    }
+
+    /**
+     * Gosling : 被正常插入，因为即使 addWithRequiresNewAndException 方法抛出了异常，requiresNewWithTransaction 方法感知到异常并产生了回滚，
+     *           但是因为 addWithRequiresNew 方法有自己单独的事务，并且已经提交了，所以 requiresNewWithTransaction 方法的回滚并不会影响 Gosling 的插入
+     * Dennis  : 不会被插入，原因和{@link #requiresNew()}中的 Dennis 的一样
+     *
+     * 由此可见，传播类型是 REQUIRES_NEW 的内部方法会各自开启自己的事务，并且互不干扰
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void requiresNewWithTransaction() {
+        userOneService.addWithRequiresNew(userGosling);
+
+        userTwoService.addWithRequiresNewAndException(userDennis);
+    }
+
+    /**
+     * Gosling : 被正常插入，原因和{@link #requiresNewWithTransaction()}的 Gosling 的一样
+     * Dennis  : 不会被插入，原因和{@link #requiresNew()}中的 Dennis 的一样
+     * Linus   : 不会被插入，因为 addWithRequired 方法的事务被加入到了 requiresNewWithTransactionAndRequired 方法的事务中，
+     *           而 addWithRequiresNewAndException 方法抛出了异常导致 requiresNewWithTransactionAndRequired 方法的事务进行了回滚
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void requiresNewWithTransactionAndRequired() {
+        userOneService.addWithRequiresNew(userGosling);
+
+        userTwoService.addWithRequiresNewAndException(userDennis);
+
+        UserOne userLinus = new UserOne().setName("Linus");
+        userOneService.addWithRequired(userLinus);
+    }
+
+    /**
+     * Gosling : 被正常插入，原因和{@link #requiresNewWithTransaction()}的 Gosling 的一样
+     * Dennis  : 不会被插入，原因和{@link #requiresNew()}中的 Dennis 的一样
+     * Linus   : 被正常插入，因为 addWithRequired 方法的事务被加入到了 requiresNewWithTransactionAndRequired 方法的事务中，
+     *           addWithRequiresNewAndException 方法抛出了异常，但是被捕获了，requiresNewWithTransactionAndRequired 方法不会感知
+     *           到这个异常，所以并不会进行回滚操作
+     *
+     * 由此可见，传播类型是 REQUIRES_NEW 的内部方法的事务和外部方法的事务互不干扰
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void requiresNewWithTransactionAndRequiredAndExceptionCatch() {
+        userOneService.addWithRequiresNew(userGosling);
+
+        try {
+            userTwoService.addWithRequiresNewAndException(userDennis);
+        } catch (RuntimeException e) {
+            System.out.println("外部方法捕获了一个异常");
+        }
+
+        UserOne userLinus = new UserOne().setName("Linus");
+        userOneService.addWithRequired(userLinus);
+    }
 }

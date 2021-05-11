@@ -30,4 +30,11 @@ public class UserTwoServiceImpl implements UserTwoService {
         userTwoMapper.insert(userTwo);
         throw new RuntimeException();
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void addWithRequiresNewAndException(UserTwo userTwo) {
+        userTwoMapper.insert(userTwo);
+        throw new RuntimeException();
+    }
 }

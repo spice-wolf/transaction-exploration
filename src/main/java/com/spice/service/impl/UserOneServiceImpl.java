@@ -29,4 +29,10 @@ public class UserOneServiceImpl implements UserOneService {
     public void addWithRequired(UserOne userOne) {
         userOneMapper.insert(userOne);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void addWithRequiresNew(UserOne userOne) {
+        userOneMapper.insert(userOne);
+    }
 }

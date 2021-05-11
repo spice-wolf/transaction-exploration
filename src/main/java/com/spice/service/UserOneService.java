@@ -20,4 +20,12 @@ public interface UserOneService {
      * @param userOne UserOne
      */
     void addWithRequired(UserOne userOne);
+
+    /**
+     * 新增UserOne
+     * propagation = requires_new
+     *
+     * @param userOne UserOne
+     */
+    void addWithRequiresNew(UserOne userOne);
 }

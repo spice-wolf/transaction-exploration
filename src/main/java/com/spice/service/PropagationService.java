@@ -23,4 +23,24 @@ public interface PropagationService {
      * 测试 required 类型，并且外部方法加上了事务，而且捕获了内部方法产生的异常
      */
     void requiredWithTransactionAndExceptionCatch();
+
+    /**
+     * 普通地测试 requires_new 类型
+     */
+    void requiresNew();
+
+    /**
+     * 测试 requires_new 类型，并且外部方法加上了事务
+     */
+    void requiresNewWithTransaction();
+
+    /**
+     * 测试 requires_new 类型，并且外部方法加上了事务，同时加入了一个 required 类型
+     */
+    void requiresNewWithTransactionAndRequired();
+
+    /**
+     * 测试 requires_new 类型，并且外部方法加上了事务，同时加入了一个 required 类型，而且捕获了内部方法产生的异常
+     */
+    void requiresNewWithTransactionAndRequiredAndExceptionCatch();
 }

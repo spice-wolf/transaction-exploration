@@ -20,4 +20,12 @@ public interface UserTwoService {
      * @param userTwo UserTwo
      */
     void addWithRequiredAndException(UserTwo userTwo);
+
+    /**
+     * 新增UserTwo，并在方法内抛出异常
+     * propagation = requires_new
+     *
+     * @param userTwo UserTwo
+     */
+    void addWithRequiresNewAndException(UserTwo userTwo);
 }

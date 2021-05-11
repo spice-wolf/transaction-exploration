@@ -53,4 +53,24 @@ public class PropagationServiceTest {
         // 实际上，正常业务是不推荐这样做的，这里只是为了测试 required 而这样写的
         Assertions.assertThrows(UnexpectedRollbackException.class, () -> propagationService.requiredWithTransactionAndExceptionCatch());
     }
+
+    @Test
+    public void requiresNewTest() {
+        Assertions.assertThrows(RuntimeException.class, () -> propagationService.requiresNew());
+    }
+
+    @Test
+    public void requiresNewTestWithTransaction() {
+        Assertions.assertThrows(RuntimeException.class, () -> propagationService.requiresNewWithTransaction());
+    }
+
+    @Test
+    public void requiresNewTestWithTransactionAndRequired() {
+        Assertions.assertThrows(RuntimeException.class, () -> propagationService.requiresNewWithTransactionAndRequired());
+    }
+
+    @Test
+    public void requiresNewTestWithTransactionAndRequiredAndExceptionCatch() {
+        propagationService.requiresNewWithTransactionAndRequiredAndExceptionCatch();
+    }
 }
