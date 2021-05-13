@@ -37,4 +37,17 @@ public class UserTwoServiceImpl implements UserTwoService {
         userTwoMapper.insert(userTwo);
         throw new RuntimeException();
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
+    public void addWithNested(UserTwo userTwo) {
+        userTwoMapper.insert(userTwo);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.NESTED)
+    public void addWithNestedAndException(UserTwo userTwo) {
+        userTwoMapper.insert(userTwo);
+        throw new RuntimeException();
+    }
 }

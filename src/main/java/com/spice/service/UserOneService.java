@@ -28,4 +28,12 @@ public interface UserOneService {
      * @param userOne UserOne
      */
     void addWithRequiresNew(UserOne userOne);
+
+    /**
+     * 新增UserOne
+     * propagation = nested
+     *
+     * @param userOne UserOne
+     */
+    void addWithNested(UserOne userOne);
 }

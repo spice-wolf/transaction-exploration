@@ -28,4 +28,20 @@ public interface UserTwoService {
      * @param userTwo UserTwo
      */
     void addWithRequiresNewAndException(UserTwo userTwo);
+
+    /**
+     * 新增UserTwo
+     * propagation = nested
+     *
+     * @param userTwo UserTwo
+     */
+    void addWithNested(UserTwo userTwo);
+
+    /**
+     * 新增UserTwo，并在方法内抛出异常
+     * propagation = nested
+     *
+     * @param userTwo UserTwo
+     */
+    void addWithNestedAndException(UserTwo userTwo);
 }

@@ -73,4 +73,24 @@ public class PropagationServiceTest {
     public void requiresNewTestWithTransactionAndRequiredAndExceptionCatch() {
         propagationService.requiresNewWithTransactionAndRequiredAndExceptionCatch();
     }
+
+    @Test
+    public void nestedTest() {
+        Assertions.assertThrows(RuntimeException.class, () -> propagationService.nested());
+    }
+
+    @Test
+    public void nestedTestWithExceptionThrows() {
+        Assertions.assertThrows(RuntimeException.class, () -> propagationService.nestedWithExceptionThrows());
+    }
+
+    @Test
+    public void nestedTestWithTransaction() {
+        Assertions.assertThrows(RuntimeException.class, () -> propagationService.nestedWithTransaction());
+    }
+
+    @Test
+    public void nestedTestWithTransactionAndExceptionCatch() {
+        propagationService.nestedWithTransactionAndExceptionCatch();
+    }
 }

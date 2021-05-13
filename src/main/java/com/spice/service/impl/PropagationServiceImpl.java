@@ -139,4 +139,65 @@ public class PropagationServiceImpl implements PropagationService {
         UserOne userLinus = new UserOne().setName("Linus");
         userOneService.addWithRequired(userLinus);
     }
+
+    /**
+     * Gosling : 被正常插入，因为 nested 方法没有事务，所以 addWithNested 方法新建一个属于自己的事务，虽然 addWithNestedAndException 方法
+     *           有抛出一个异常，但是并不影响 addWithNested 方法的事务
+     * Dennis  : 不会被插入，因为 nested 方法没有事务，所以 addWithNestedAndException 方法新建一个属于自己的事务，然后内部抛了一个异常
+     *           导致了事务回滚
+     */
+    @Override
+    public void nested() {
+        userOneService.addWithNested(userGosling);
+
+        userTwoService.addWithNestedAndException(userDennis);
+    }
+
+    /**
+     * Gosling : 被正常插入，因为 nestedWithExceptionThrows 方法没有事务，所以 addWithNested 方法新建一个属于自己的事务，
+     *           虽然 nestedWithExceptionThrows 方法中抛出了一个异常，但是不影响 addWithNested 方法的独立事务
+     * Linus   : 被正常插入，原因和 Gosling 的一样
+     */
+    @Override
+    public void nestedWithExceptionThrows() {
+        userOneService.addWithNested(userGosling);
+
+        UserTwo userLinus = new UserTwo().setName("Linus");
+        userTwoService.addWithNested(userLinus);
+        throw new RuntimeException();
+    }
+
+    /**
+     * Gosling : 不会被插入，因为 nestedWithTransaction 方法开启了事务，所以 addWithNested 方法也会开启一个该事务的子事务，
+     *           addWithNestedAndException 方法抛出了异常，nestedWithTransaction 方法感知到异常并进行了回滚，所以子事务也会进行回滚
+     * Dennis  : 不会被插入，因为 addWithNestedAndException 方法中抛出了异常，导致了自己的事务（指 addWithNestedAndException 方法的事务）进行了回滚，
+     *           注意 Dennis 的原因和 Gosling 的原因是不一样的，可以接着看下面的{@link #nestedWithTransactionAndExceptionCatch()}方法
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void nestedWithTransaction() {
+        userOneService.addWithNested(userGosling);
+
+        userTwoService.addWithNestedAndException(userDennis);
+    }
+
+    /**
+     * Gosling : 被正常插入，因为 nestedWithTransactionAndExceptionCatch 方法开启了事务，addWithNested 方法也会开启一个该事务的子事务，
+     *           nestedWithTransactionAndExceptionCatch 方法捕获了异常，即没有感知到异常，事务正常提交了，因而 addWithNested 方法的
+     *           事务也被正常提交了
+     * Dennis  : 不会被插入，因为 addWithNestedAndException 方法抛出了异常，事务被回滚了，但是这个事务是嵌套事务中的子事务，并不会导致外部事务回滚
+     *
+     * 由此可见，嵌套事务中的外部事务回滚会导致它的所有子事务都回滚；嵌套事务中的子事务回滚不会导致它的外部事务回滚，这点和 required 类型不同！
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void nestedWithTransactionAndExceptionCatch() {
+        userOneService.addWithNested(userGosling);
+
+        try {
+            userTwoService.addWithNestedAndException(userDennis);
+        } catch (RuntimeException e) {
+            System.out.println("外部方法捕获了一个异常");
+        }
+    }
 }
